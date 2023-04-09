@@ -12,8 +12,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.shareit.item.ItemMapper.toItem;
-import static ru.practicum.shareit.item.ItemMapper.toItemDto;
+import static ru.practicum.shareit.item.ItemMapper.*;
 
 @Service
 @Slf4j
