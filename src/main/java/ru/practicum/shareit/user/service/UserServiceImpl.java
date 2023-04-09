@@ -9,10 +9,9 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static ru.practicum.shareit.user.UserMapper.*;
+import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
 @Slf4j

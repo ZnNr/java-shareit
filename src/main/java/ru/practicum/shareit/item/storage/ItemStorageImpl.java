@@ -16,6 +16,7 @@ public class ItemStorageImpl implements ItemStorage {
     public ItemStorageImpl() {
         this.items = new HashMap<>();
     }
+
     @Override
     public Collection<Item> getAll() {
         return items.values();
