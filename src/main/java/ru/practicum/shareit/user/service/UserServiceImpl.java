@@ -1,4 +1,3 @@
-
 package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +9,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static ru.practicum.shareit.user.UserMapper.*;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -23,8 +22,6 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
-
 
     @Override
     public List<UserDto> getAllUsers() {
