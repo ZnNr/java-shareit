@@ -51,7 +51,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public UserDto update(@RequestBody User newUser, @PathVariable long id, Errors errors) {
-        log.info("Получен запрос PATCH /users/id " + " !произойдет обновление юзера с id"+ id + " на " + newUser);
+        log.info("Получен запрос PATCH /users/id " + " !произойдет обновление юзера с id" + id + " на " + newUser);
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
         } else {
@@ -61,7 +61,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
-        log.info("Получен запрос DELETE /users/"+ id);
+        log.info("Получен запрос DELETE /users/" + id);
         userService.delete(id);
     }
 }

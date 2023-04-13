@@ -55,11 +55,10 @@ public class ItemController {
             return itemService.update(itemDto, id, userId);
         }
     }
+
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Получен запрос PATCH /items/search " + text);
         return itemService.search(text);
     }
-
-
 }
