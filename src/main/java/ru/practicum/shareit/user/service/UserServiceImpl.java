@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.shareit.user.UserMapper.toUserDto;
+import static ru.practicum.shareit.user.UserMapper.*;
 
 @Service
 @Slf4j
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     public UserDto add(User user) {
         if (!checkIsEmailUnique(user.getId(), user.getEmail())) {
             log.info("Ошибка добавления пользователя. Email занят.");
-           }
+        }
         log.info("Пользователь с id = {} успешно создан", user);
         return toUserDto(userStorage.add(user));
     }
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
-        if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail())&&(checkIsEmailUnique(user.getId(), user.getEmail()))) {
+        if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail()) && (checkIsEmailUnique(user.getId(), user.getEmail()))) {
             updatedUser.setEmail(user.getEmail());
         }
         log.info("Обновление пользователя с id = {} ", user.getId());
