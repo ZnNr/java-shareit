@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.shareit.user.UserMapper.*;
+import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
 @Slf4j
@@ -44,7 +44,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(User user) {
-        checkIsEmailUnique(user);
+        if (!checkIsEmailUnique(user.getId(), user.getEmail())) {
+            log.info("Ошибка добавления пользователя. Email занят.");
+           }
+        log.info("Пользователь с id = {} успешно создан", user);
         return toUserDto(userStorage.add(user));
     }
 
@@ -56,26 +59,26 @@ public class UserServiceImpl implements UserService {
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
-        if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail())) {
-            checkIsEmailUnique(user);
+        if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail())&&(checkIsEmailUnique(user.getId(), user.getEmail()))) {
             updatedUser.setEmail(user.getEmail());
         }
-        log.info("Пользователь с id = {} успешно обновлен", user.getId());
+        log.info("Обновление пользователя с id = {} ", user.getId());
         return toUserDto(userStorage.update(updatedUser));
     }
 
     @Override
     public void delete(Long id) {
-        get(id);
-        log.info("Пользователь с id = {} успешно удален", id);
         userStorage.delete(id);
+        log.info("Пользователь с id = {} успешно удален", id);
     }
 
-    private void checkIsEmailUnique(User user) {
-        for (User u : userStorage.findAll()) {
-            if (user.getEmail().equals(u.getEmail())) {
-                throw new EmailIsNotUniqueException(String.format("Пользователь с таким email {} уже зарегистрирован", user.getEmail()));
+    public boolean checkIsEmailUnique(Long id, String checkedEmail) {
+        for (User user : userStorage.findAll()) {
+            if (user.getEmail().equals(checkedEmail) && !(user.getId().equals(id))) {
+                throw new EmailIsNotUniqueException("Email " + user.getEmail() + " уже занят");
+
             }
         }
+        return true;
     }
 }

@@ -33,8 +33,7 @@ public class UserStorageImpl implements UserStorage {
 
     @Override
     public User add(User user) {
-        ++id;
-        user.setId(id);
+        user.setId(++id);
         users.put(user.getId(), user);
         return user;
     }

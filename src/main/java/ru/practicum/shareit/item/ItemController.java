@@ -25,19 +25,19 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Получен запрос GET /items");
+        log.info("Получен запрос GET /items " + userId);
         return itemService.getAll(userId);
     }
 
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable Long id) {
-        log.info("Получен запрос GET /items/id");
+        log.info("Получен запрос GET /items/id  запрос на вещь с id" + id);
         return itemService.get(id);
     }
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto, Errors errors) {
-        log.info("Получен запрос POST /items");
+        log.info("Получен запрос POST /items " + itemDto);
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
         } else {
@@ -47,14 +47,17 @@ public class ItemController {
 
     @PatchMapping("/{id}")
     public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long id,
-                          @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Получен запрос PATCH /items/id");
-        return itemService.update(itemDto, id, userId);
+                          @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
+        log.info("Получен запрос PATCH /items/id " + "!Обновление вещи с id" + id + " на " + itemDto + " юзер с id" + userId);
+        if (errors.hasErrors()) {
+            throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
+        } else {
+            return itemService.update(itemDto, id, userId);
+        }
     }
-
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
-        log.info("Получен запрос PATCH /items/search");
+        log.info("Получен запрос PATCH /items/search " + text);
         return itemService.search(text);
     }
 
