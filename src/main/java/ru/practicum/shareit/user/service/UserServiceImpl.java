@@ -1,84 +1,79 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.EmailIsNotUniqueException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static ru.practicum.shareit.user.UserMapper.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final String USER_NOT_EXISTS_MSG = "Пользователь с id = %d не существует";
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    @Override
+    public List<UserDto> getAll() {
+        log.info("Вывод всех пользователей.");
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        log.info("Список всех пользователей успешно отправлен");
-        List<UserDto> users = new ArrayList<>();
-        for (User user : userStorage.findAll()) {
-            users.add(toUserDto(user));
+    public UserDto getById(Long id) {
+        log.info("Вывод пользователя с id {}.", id);
+        return userMapper.toUserDto(userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с таким id не существует.")));
+    }
+
+    @Override
+    @Transactional
+    public UserDto add(UserDto userDto) {
+        log.info("Добавление пользователя {}", userDto);
+        return userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));
+    }
+
+    @Override
+    @Transactional
+    public UserDto update(Long id, UserDto userDto) {
+        log.info("Обновление пользователя {} с id {}.", userDto, id);
+
+        User repoUser = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с таким id не существует."));
+
+        userDto.setId(id);
+        User user = userMapper.toUser(userDto);
+
+        if (user.getEmail() != null) {
+            repoUser.setEmail(user.getEmail());
         }
-        return users;
-    }
-
-    @Override
-    public UserDto get(Long id) {
-        User user = userStorage.findById(id)
-                .orElseThrow(() ->
-                        new NotFoundException(String.format(USER_NOT_EXISTS_MSG, id)));
-        log.info("Пользователь с id = {} успешно отправлен", id);
-        return toUserDto(user);
-    }
-
-    @Override
-    public UserDto add(User user) {
-        if (!checkIsEmailUnique(user.getId(), user.getEmail())) {
-            log.info("Ошибка добавления пользователя. Email занят.");
-        }
-        log.info("Пользователь с id = {} успешно создан", user);
-        return toUserDto(userStorage.add(user));
-    }
-
-    @Override
-    public UserDto update(User user, long id) {
-        user.setId(id);
-        User updatedUser = userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format(USER_NOT_EXISTS_MSG, user.getId())));
         if (user.getName() != null) {
-            updatedUser.setName(user.getName());
+            repoUser.setName(user.getName());
         }
-        if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail()) && (checkIsEmailUnique(user.getId(), user.getEmail()))) {
-            updatedUser.setEmail(user.getEmail());
-        }
-        log.info("Обновление пользователя с id = {} ", user.getId());
-        return toUserDto(userStorage.update(updatedUser));
+
+        return userMapper.toUserDto(userRepository.save(repoUser));
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        userStorage.delete(id);
-        log.info("Пользователь с id = {} успешно удален", id);
+        log.info("Удаление пользователя с id {}", id);
+        userRepository.deleteById(id);
     }
 
-    public boolean checkIsEmailUnique(Long id, String checkedEmail) {
-        for (User user : userStorage.findAll()) {
-            if (user.getEmail().equals(checkedEmail) && !(user.getId().equals(id))) {
-                throw new EmailIsNotUniqueException("Email " + user.getEmail() + " уже занят");
-
-            }
-        }
-        return true;
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с таким id не существует."));
     }
 }
