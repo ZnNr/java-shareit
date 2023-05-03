@@ -39,8 +39,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemExtendedDto> getByOwnerId(Long userId) {
-        log.info("Вывод всех вещей пользователя с id {}.", userId);
-
+        //log.info("Вывод всех вещей пользователя с id {}.", userId);
         List<Item> items = itemRepository.getAllByOwnerIdOrderByIdAsc(userId);
 
         List<Long> itemIds = items.stream()
@@ -55,6 +54,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.groupingBy(Booking::getItem));
 
         Map<Long, List<CommentDto>> commentDtosByItem = new HashMap<>();
+        //items sorting by comment and collect items to HashMap commentDtosByItem
         for (Item item : items) {
             if (commentsByItem.get(item) == null) {
                 commentDtosByItem.put(item.getId(), new ArrayList<>());
@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Map<Long, List<BookingItemDto>> bookingDtosByItem = new HashMap<>();
-
+        //items sorting by bookings and collect items to HashMap bookingDtosByItem
         for (Item item : items) {
             if (bookingsByItem.get(item) != null) {
                 bookingDtosByItem.put(item.getId(), bookingsByItem.get(item)
@@ -78,19 +78,21 @@ public class ItemServiceImpl implements ItemService {
                         .collect(Collectors.toList()));
             }
         }
+//new hashMap for Next and Last booking
         Map<Long, BookingItemDto> lastBookingByItem = new HashMap<>();
         Map<Long, BookingItemDto> nextBookingByItem = new HashMap<>();
-
+//check null(isEmpty) booking
         for (Item item : items) {
             if (bookingsByItem.get(item) == null) {
                 lastBookingByItem.put(item.getId(), null);
                 nextBookingByItem.put(item.getId(), null);
             } else {
+//getNextBooking
                 nextBookingByItem.put(item.getId(), bookingDtosByItem.get(item.getId())
                         .stream()
                         .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
                         .findFirst().orElse(null));
-
+//getLastBooking
                 lastBookingByItem.put(item.getId(), bookingDtosByItem.get(item.getId())
                         .stream()
                         .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
@@ -102,15 +104,18 @@ public class ItemServiceImpl implements ItemService {
                 .map(item -> itemMapper.toItemExtendedDto(item, null, null, null))
                 .collect(Collectors.toList());
 
-        itemExtendedDtos.forEach(ItemDto -> ItemDto.setComments(commentDtosByItem.get(ItemDto.getId())));
-        itemExtendedDtos.forEach(ItemDto -> ItemDto.setNextBooking(lastBookingByItem.get(ItemDto.getId())));
-        itemExtendedDtos.forEach(ItemDto -> ItemDto.setLastBooking(nextBookingByItem.get(ItemDto.getId())));
+        itemExtendedDtos.forEach(ItemDto -> {
+            ItemDto.setComments(commentDtosByItem.get(ItemDto.getId()));
+            ItemDto.setNextBooking(lastBookingByItem.get(ItemDto.getId()));
+            ItemDto.setLastBooking(nextBookingByItem.get(ItemDto.getId()));
+        });
+
         return itemExtendedDtos;
     }
 
     @Override
     public ItemExtendedDto getById(Long userId, Long id) {
-        log.info("Вывод вещи с id {}.", id);
+        // log.info("Вывод вещи с id {}.", id);
 
         Item item = getItemById(id);
         if (!Objects.equals(userId, item.getOwner().getId())) {
@@ -124,7 +129,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto add(Long userId, ItemDto itemDto) {
-        log.info("Создание вещи {} пользователем с id {}.", itemDto, userId);
+        //log.info("Создание вещи {} пользователем с id {}.", itemDto, userId);
         Item item = itemMapper.toItem(itemDto, userService.getUserById(userId));
         return itemMapper.toItemDto(itemRepository.save(item));
     }
@@ -132,7 +137,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto update(Long userId, Long id, ItemDto itemDto) {
-        log.info("Обновление вещи {} с id {} пользователем с id {}.", itemDto, id, userId);
+        //log.info("Обновление вещи {} с id {} пользователем с id {}.", itemDto, id, userId);
 
         Item repoItem = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Вещи с таким id не существует."));
@@ -157,13 +162,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void delete(Long id) {
-        log.info("Удаление вещи с id {}.", id);
+        //log.info("Удаление вещи с id {}.", id);
         itemRepository.deleteById(id);
     }
 
     @Override
     public List<ItemDto> search(String text) {
-        log.info("Поиск вещей с подстрокой \"{}\".", text);
+        //log.info("Поиск вещей с подстрокой \"{}\".", text);
 
         if (text.isBlank() || text.isEmpty()) {
             return new ArrayList<>();
@@ -178,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDto addComment(Long userId, Long id, CommentRequestDto commentRequestDto) {
-        log.info("Добавление комментария пользователем с id {} вещи с id {}.", userId, id);
+        //log.info("Добавление комментария пользователем с id {} вещи с id {}.", userId, id);
 
         Comment comment = itemMapper.commentRequestDtoToComment(commentRequestDto,
                 LocalDateTime.now(),

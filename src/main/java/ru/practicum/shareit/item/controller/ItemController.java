@@ -55,6 +55,7 @@ public class ItemController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+        log.info("Получен запрос POST /items/id " + id);
         itemService.delete(id);
     }
 

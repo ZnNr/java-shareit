@@ -36,12 +36,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto getById(Long userId, Long id) {
         log.info("Вывод бронирования с id {}.", id);
-
         Booking booking = getBookingById(id);
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
             throw new NotFoundException("Просмотр бронирования доступно только автору или владельцу.");
         }
-
         return bookingMapper.bookingToBookingResponseDto(booking);
     }
 
@@ -75,7 +73,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusEqualsOrderByStartDesc(
                         userId, Status.REJECTED);
-
         }
 
         return bookings.stream()
@@ -86,7 +83,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponseDto> getAllByOwnerId(Long userId, BookingState bookingState) {
         log.info("Вывод всех вещей пользователя {} и статусом {}.", userId, bookingState);
-
         userService.getUserById(userId);
         List<Booking> bookings = null;
         LocalDateTime dateTime = LocalDateTime.now();
@@ -114,7 +110,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByItemOwnerIdAndStatusEqualsOrderByStartDesc(
                         userId, Status.REJECTED);
-
         }
 
         return bookings.stream()
@@ -126,7 +121,6 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponseDto add(Long userId, BookingRequestDto bookingRequestDto) {
         log.info("Создание бронирования {} пользователем с id {}.", bookingRequestDto, userId);
-
         if (bookingRequestDto.getEnd().isBefore(bookingRequestDto.getStart())) {
             throw new BookingException("Недопустимое время брони.");
         }
@@ -172,7 +166,6 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponseDto update(Long userId, Long id, Boolean approved) {
         log.info("Обновление статуса бронирования {}.", id);
-
         Booking repoBooking = getBookingById(id);
 
         if (!userId.equals(repoBooking.getItem().getOwner().getId())) {
