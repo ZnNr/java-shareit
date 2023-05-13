@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<mapstruct.version>1.5.3.Final</mapstruct.version>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,20 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct </groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct </groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -213,6 +228,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
+						<version>4.7.0.0</version>
 					</plugin>
 				</plugins>
 			</build>
@@ -221,6 +237,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
+						<version>4.7.0.0</version>
 					</plugin>
 				</plugins>
 			</reporting>
@@ -232,10 +249,10 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.8</version>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
 </project>

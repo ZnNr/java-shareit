@@ -1,36 +1,55 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Builder;
-import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
+import java.util.Objects;
 
-
-/**
- * TODO Sprint add-controllers.
- */
-
-@Data
+@Entity
+@Table(name = "items", schema = "public")
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Item {
-    //id — уникальный идентификатор вещи;
-    private Long id;
-    //owner — владелец вещи;
-    private User owner;
-    //name — краткое название;
-    @NotNull
-    @NotBlank(message = "Название не может быть пустым!")
-    private String name;
-    //description — развёрнутое описание;
-    @NotBlank(message = "Описание не может быть пустым!")
-    private String description;
-    //available — статус о том, доступна или нет вещь для аренды;
-    @NotNull(message = "Статус о том дуоступен ли товар или нет не должен быть пустым!")
-    private Boolean available;
-    //request — если вещь была создана по запросу другого пользователя, то в этом
-    //поле будет храниться ссылка на соответствующий запрос.
-    private ItemRequest request;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(nullable = false)
+    String name;
+
+    @Column(nullable = false)
+    String description;
+
+    @Column(nullable = false)
+    Boolean available;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
+    User owner;
+
+    @Column(name = "request_id")
+    Long requestId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        return id != null && id.equals(((Item) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, available, owner, requestId);
+    }
 }
+
