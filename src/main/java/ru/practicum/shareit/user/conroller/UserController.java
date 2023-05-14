@@ -21,7 +21,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    public static final String headerUserId = "X-Sharer-User-Id";
 
     @GetMapping
     public List<UserDto> getAll() {
@@ -30,25 +29,31 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto getById(@PathVariable Long id) {
+    public UserDto getById(
+            @PathVariable Long id) {
         log.info("Получен запрос GET /users/id " + id);
         return userService.getById(id);
     }
 
     @PostMapping
-    public UserDto add(@Validated(Create.class) @RequestBody UserDto userDto) {
+    public UserDto add(
+            @Validated(Create.class)
+            @RequestBody UserDto userDto) {
         log.info("Получен запрос POST /users " + userDto);
         return userService.add(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @Validated(Update.class) @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable Long id,
+                          @Validated(Update.class)
+                          @RequestBody UserDto userDto) {
         log.info("Получен запрос PATCH /users/id " + "!Обновление пользователя с id " + id + " на " + userDto);
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(
+            @PathVariable Long id) {
         log.info("Получен запрос POST /users/id " + id);
         userService.delete(id);
     }

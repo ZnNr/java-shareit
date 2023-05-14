@@ -39,10 +39,9 @@ public interface ItemMapper {
     @Mapping(target = "id", expression = "java(null)")
     @Mapping(target = "created", expression = "java(dateTime)")
     @Mapping(target = "author", expression = "java(user)")
-    @Mapping(target = "item", expression = "java(item)")
-    Comment commentRequestDtoToComment(CommentRequestDto commentRequestDto, LocalDateTime dateTime, User user, Item item);
+    Comment commentRequestDtoToComment(CommentRequestDto commentRequestDto, LocalDateTime dateTime,
+                                       User user, Long itemId);
 
     @Mapping(target = "authorName", expression = "java(comment.getAuthor().getName())")
-    @Mapping(target = "created", expression = "java(comment.getCreated())")
     CommentDto commentToCommentDto(Comment comment);
 }

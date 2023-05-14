@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -31,15 +30,13 @@ public class Comment {
     @Column(name = "created_date", nullable = false)
     LocalDateTime created;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     User author;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    Item item;
+    @Column(name = "item_id")
+    Long itemId;
 
     @Override
     public boolean equals(Object o) {
@@ -50,6 +47,6 @@ public class Comment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, text, created, author, item);
+        return Objects.hash(id, text, created, author, itemId);
     }
 }
