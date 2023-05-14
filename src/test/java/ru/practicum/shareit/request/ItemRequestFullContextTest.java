@@ -143,7 +143,7 @@ public class ItemRequestFullContextTest {
                     .build();
             itemController.add(itemDto.getOwnerId(), itemDto);
 
-            List<ItemRequestExtendedDto> itemRequestsFromController = itemRequestController.getByRequestId(userDto1.getId());
+            List<ItemRequestExtendedDto> itemRequestsFromController = itemRequestController.getByRequestorId(userDto1.getId());
 
             assertEquals(1, itemRequestsFromController.size());
 

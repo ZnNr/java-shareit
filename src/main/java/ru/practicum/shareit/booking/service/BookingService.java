@@ -1,11 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.enums.State;
-
 
 import java.util.List;
 
@@ -20,4 +18,4 @@ public interface BookingService {
 
     BookingResponseDto update(Long userId, Long id, Boolean approved);
 
-   }
+}
