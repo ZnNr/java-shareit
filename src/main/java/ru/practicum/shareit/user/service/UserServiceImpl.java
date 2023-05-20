@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -51,14 +51,11 @@ public class UserServiceImpl implements UserService {
         User repoUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя с таким id не существует."));
 
-        userDto.setId(id);
-        User user = userMapper.toUser(userDto);
-
-        if (user.getEmail() != null) {
-            repoUser.setEmail(user.getEmail());
+        if (userDto.getEmail() != null) {
+            repoUser.setEmail(userDto.getEmail());
         }
-        if (user.getName() != null) {
-            repoUser.setName(user.getName());
+        if (userDto.getName() != null) {
+            repoUser.setName(userDto.getName());
         }
 
         return userMapper.toUserDto(userRepository.save(repoUser));

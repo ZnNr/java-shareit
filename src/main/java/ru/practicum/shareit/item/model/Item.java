@@ -32,7 +32,7 @@ public class Item {
     @Column(nullable = false)
     Boolean available;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     User owner;
@@ -52,4 +52,3 @@ public class Item {
         return Objects.hash(id, name, description, available, owner, requestId);
     }
 }
-

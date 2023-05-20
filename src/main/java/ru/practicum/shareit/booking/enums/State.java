@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.enums;
 
 import java.util.Optional;
 
-public enum BookingState {
+public enum State {
 
     ALL,
     CURRENT,
@@ -11,8 +11,8 @@ public enum BookingState {
     WAITING,
     REJECTED;
 
-    public static Optional<BookingState> stringToState(String state) {
-        for (BookingState value : BookingState.values()) {
+    public static Optional<State> stringToState(String state) {
+        for (State value : State.values()) {
             if (value.name().equals(state)) {
                 return Optional.of(value);
             }
