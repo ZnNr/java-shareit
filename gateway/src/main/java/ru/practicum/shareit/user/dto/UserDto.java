@@ -1,6 +1,9 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.shareit.markers.Create;
 import ru.practicum.shareit.markers.Update;
 

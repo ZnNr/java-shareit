@@ -56,15 +56,15 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> add(@RequestHeader(Constants.headerUserId) Long userId,
-                                  @Valid @RequestBody BookingRequestDto bookingRequestDto) {
+                                      @Valid @RequestBody BookingRequestDto bookingRequestDto) {
         log.info("Получен запрос POST /bookings " + userId);
         return bookingClient.add(userId, bookingRequestDto);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@RequestHeader(Constants.headerUserId) Long userId,
-                                     @PathVariable Long id,
-                                     @RequestParam() Boolean approved) {
+                                         @PathVariable Long id,
+                                         @RequestParam() Boolean approved) {
         log.info("Получен запрос PATCH /bookings/id " + " ! статус брони вещи с id" + id + ": забронировано=" + approved + " юзер с id" + userId);
         return bookingClient.update(userId, id, approved);
     }
