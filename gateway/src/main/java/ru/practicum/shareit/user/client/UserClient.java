@@ -30,21 +30,21 @@ public class UserClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> addUser(UserDto userDto) {
+    public ResponseEntity<Object> add(UserDto userDto) {
 
         return post("", userDto);
     }
 
-    public ResponseEntity<Object> getUser(@PathVariable long id) {
+    public ResponseEntity<Object> getById(@PathVariable long id) {
 
         return get("/" + id);
     }
 
-    public ResponseEntity<Object> getUsers() {
+    public ResponseEntity<Object> getAll() {
         return get("");
     }
 
-    public ResponseEntity<Object> updateUser(@RequestBody @Valid UserDto userDto, @PathVariable long id) {
+    public ResponseEntity<Object> update(@RequestBody @Valid UserDto userDto, @PathVariable long id) {
 
         return patch("/" + id, userDto);
     }

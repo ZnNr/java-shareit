@@ -1,73 +1,82 @@
 package ru.practicum.shareit.item.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.client.ItemClient;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.markers.Constants;
+import ru.practicum.shareit.markers.Create;
+import ru.practicum.shareit.markers.Update;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-@Validated
-@Controller
-@RequestMapping(path = "/items")
+@RestController
+@RequestMapping("/items")
 @Slf4j
-@RequiredArgsConstructor
+@Validated
 public class ItemController {
     private final ItemClient itemClient;
 
-    @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader(name = Constants.headerUserId) Long ownerId,
-                                          @RequestBody @Valid ItemDto itemDto) {
-        log.info("Получен запрос POST /items создание вещи item={}, userid={}", itemDto, ownerId);
-        return itemClient.addItem(ownerId, itemDto);
-    }
-
-    @PostMapping(path = "/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader(name = Constants.headerUserId) Long authorId,
-                                             @PathVariable Long itemId,
-                                             @RequestBody @Valid CommentDto commentDto) {
-        return itemClient.addComment(authorId, itemId, commentDto);
+    public ItemController(ItemClient itemClient) {
+        this.itemClient = itemClient;
     }
 
     @GetMapping
-    public ResponseEntity<Object> getOwnerItems(
-            @RequestHeader(name = Constants.headerUserId) Long ownerId,
+    public ResponseEntity<Object> getByOwnerId(
+            @RequestHeader(Constants.headerUserId) Long userId,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
-        log.info("Получен запрос GET owner items, ownerId={}, from={}, size={}", ownerId, from, size);
-        return itemClient.getOwnerItems(ownerId, from, size);
+        log.info("Получен запрос GET /items " + userId);
+        return itemClient.getByOwnerId(userId, from, size);
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getItem(@RequestHeader(name = Constants.headerUserId) Long requestorId,
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@RequestHeader(Constants.headerUserId) Long userId,
                                           @PathVariable Long id) {
-        log.info("Получен запрос GET item, requesterId={}, itemId={}", requestorId, id);
-        return itemClient.getItem(requestorId, id);
+        log.info("Получен запрос GET /items/id  запрос на вещь с id" + id);
+        return itemClient.getById(userId, id);
     }
 
-    @PatchMapping(path = "/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader(name = Constants.headerUserId) Long ownerId,
-                                             @PathVariable Long itemId,
-                                             @RequestBody ItemDto itemDto) {
-        log.info("Получен запрос PATCH  " + "!Обновление вещи с id" + itemId + " на " + itemDto + " юзер с id" + ownerId);
-        return itemClient.updateItem(ownerId, itemId, itemDto);
+    @PostMapping
+    public ResponseEntity<Object> add(@RequestHeader(Constants.headerUserId) Long userId,
+                                      @Validated(Create.class) @RequestBody ItemDto itemDto) {
+        log.info("Получен запрос POST /items " + itemDto);
+        return itemClient.add(userId, itemDto);
     }
 
-    @GetMapping(path = "/search")
-    public ResponseEntity<Object> getItemBySearch(
-            @RequestHeader(name = Constants.headerUserId) Long ownerId,
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> update(@RequestHeader(Constants.headerUserId) Long userId,
+                                         @PathVariable Long id,
+                                         @Validated(Update.class) @RequestBody ItemDto itemDto) {
+        log.info("Получен запрос PATCH /items/id " + "!Обновление вещи с id" + id + " на " + itemDto + " юзер с id" + userId);
+        return itemClient.update(userId, id, itemDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
+        log.info("Получен запрос POST /items/id " + id);
+        return itemClient.deleteItem(id);
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(
             @RequestParam String text,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
-        log.info("Получен запрос PATCH  Поиск вещей ownerId={}, text={}, from={}, size={}", ownerId, text, from, size);
-        return itemClient.searchAvailableItems(ownerId, text, from, size);
+        log.info("Получен запрос PATCH /items/search " + text);
+        return itemClient.search(text, from, size);
+    }
+
+    @PostMapping("{id}/comment")
+    public ResponseEntity<Object> addComment(@RequestHeader(Constants.headerUserId) long userId,
+                                             @PathVariable long id,
+                                             @Valid @RequestBody CommentDto commentDto) {
+        return itemClient.addComment(userId, id, commentDto);
     }
 }

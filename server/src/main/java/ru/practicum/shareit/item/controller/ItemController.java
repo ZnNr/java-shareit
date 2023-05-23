@@ -19,7 +19,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/items")
+@RequestMapping("/items")
 @Slf4j
 @Validated
 public class ItemController {
@@ -69,7 +69,7 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> search(
-                      @RequestParam String text,
+            @RequestParam String text,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
         log.info("Получен запрос PATCH /items/search " + text);

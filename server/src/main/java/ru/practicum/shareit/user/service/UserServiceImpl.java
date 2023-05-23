@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAll() {
         log.info("Вывод всех пользователей.");
         return userRepository.findAll().stream()
                 .map(userMapper::toUserDto)
@@ -38,14 +38,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto userDto) {
+    public UserDto add(UserDto userDto) {
         log.info("Добавление пользователя {}", userDto);
         return userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));
     }
 
     @Override
     @Transactional
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto update(Long id, UserDto userDto) {
         log.info("Обновление пользователя {} с id {}.", userDto, id);
 
         User repoUser = userRepository.findById(id)
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         log.info("Удаление пользователя с id {}", id);
         userRepository.deleteById(id);
     }

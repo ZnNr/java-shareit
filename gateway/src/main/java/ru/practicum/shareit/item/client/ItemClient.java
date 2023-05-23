@@ -30,43 +30,45 @@ public class ItemClient extends BaseClient {
 
     }
 
-    public ResponseEntity<Object> addItem(long ownerId, ItemDto itemDto) {
+    public ResponseEntity<Object> add(long userId, ItemDto itemDto) {
 
-        return post("", ownerId, itemDto);
+        return post("", userId, itemDto);
     }
 
-    public ResponseEntity<Object> addComment(long authorId, long itemId, CommentDto commentDto) {
+    public ResponseEntity<Object> addComment(long userId, long id, CommentDto commentDto) {
 
-        return post("/" + itemId + "/comment", authorId, commentDto);
+        return post("/" + id + "/comment", userId, commentDto);
     }
 
-    public ResponseEntity<Object> getItem(long requesterId, long id) {
-        return get("/" + id, requesterId);
+    public ResponseEntity<Object> getById(long userId, long id) {
+        return get("/" + id, userId);
     }
 
-    public ResponseEntity<Object> getOwnerItems(long ownerId, int from, int size) {
+    public ResponseEntity<Object> getByOwnerId(long userId, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
         );
 
-        return get("?from={from}&size={size}", ownerId, parameters);
+        return get("?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> searchAvailableItems(
-            long ownerId, String text, int from, int size) {
+    public ResponseEntity<Object> search(String text, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "text", text,
                 "from", from,
                 "size", size
         );
-
-        return get("/search?text={text}&from={from}&size={size}", ownerId, parameters);
+        return get("/search?text={text}&from={from}&size={size}", parameters);
     }
 
-    public ResponseEntity<Object> updateItem(long ownerId, long itemId, ItemDto itemDto) {
+    public ResponseEntity<Object> update(long userId, long id, ItemDto itemDto) {
 
-        return patch("/" + itemId, ownerId, itemDto);
+        return patch("/" + id, userId, itemDto);
     }
 
+
+    public ResponseEntity<Object> deleteItem(long id) {
+        return delete("/" + id);
+    }
 }

@@ -106,7 +106,7 @@ public class BookingControllerTest {
     class Add {
         @Test
         public void shouldAdd() throws Exception {
-            when(bookingService.saveBooking(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.any(BookingRequestDto.class)))
+            when(bookingService.add(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.any(BookingRequestDto.class)))
                     .thenReturn(bookingResponseDto1);
 
             mvc.perform(post("/bookings")
@@ -118,7 +118,7 @@ public class BookingControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(bookingResponseDto1)));
 
-            verify(bookingService, times(1)).saveBooking(ArgumentMatchers.eq(user2.getId()),
+            verify(bookingService, times(1)).add(ArgumentMatchers.eq(user2.getId()),
                     ArgumentMatchers.any(BookingRequestDto.class));
         }
 
@@ -135,7 +135,7 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(bookingService, never()).saveBooking(ArgumentMatchers.any(), ArgumentMatchers.any());
+            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
@@ -151,7 +151,7 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(bookingService, never()).saveBooking(ArgumentMatchers.any(), ArgumentMatchers.any());
+            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
@@ -166,7 +166,7 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(bookingService, never()).saveBooking(ArgumentMatchers.any(), ArgumentMatchers.any());
+            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
         }
     }
 
@@ -176,7 +176,7 @@ public class BookingControllerTest {
         public void shouldApproved() throws Exception {
             bookingResponseDto.setStatus(Status.APPROVED);
 
-            when(bookingService.approve(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto.getId()),
+            when(bookingService.update(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto.getId()),
                     ArgumentMatchers.eq(true)))
                     .thenReturn(bookingResponseDto);
 
@@ -185,7 +185,7 @@ public class BookingControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(bookingResponseDto)));
 
-            verify(bookingService, times(1)).approve(ArgumentMatchers.eq(user2.getId()),
+            verify(bookingService, times(1)).update(ArgumentMatchers.eq(user2.getId()),
                     ArgumentMatchers.eq(bookingResponseDto.getId()), ArgumentMatchers.eq(true));
         }
 
@@ -193,7 +193,7 @@ public class BookingControllerTest {
         public void shouldReject() throws Exception {
             bookingResponseDto.setStatus(Status.REJECTED);
 
-            when(bookingService.approve(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto.getId()),
+            when(bookingService.update(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto.getId()),
                     ArgumentMatchers.eq(false)))
                     .thenReturn(bookingResponseDto);
 
@@ -202,7 +202,7 @@ public class BookingControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(bookingResponseDto)));
 
-            verify(bookingService, times(1)).approve(ArgumentMatchers.eq(user2.getId()),
+            verify(bookingService, times(1)).update(ArgumentMatchers.eq(user2.getId()),
                     ArgumentMatchers.eq(bookingResponseDto.getId()), ArgumentMatchers.eq(false));
         }
     }
@@ -211,7 +211,7 @@ public class BookingControllerTest {
     class GetById {
         @Test
         public void shouldGet() throws Exception {
-            when(bookingService.getBookingById(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto1.getId())))
+            when(bookingService.getById(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto1.getId())))
                     .thenReturn(bookingResponseDto1);
 
             mvc.perform(get("/bookings/{id}", bookingResponseDto1.getId())
@@ -220,7 +220,7 @@ public class BookingControllerTest {
                     .andExpect(content().json(mapper.writeValueAsString(bookingResponseDto1)));
 
             verify(bookingService, times(1))
-                    .getBookingById(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto1.getId()));
+                    .getById(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.eq(bookingResponseDto1.getId()));
         }
     }
 
@@ -297,7 +297,7 @@ public class BookingControllerTest {
     class GetAllByByOwnerId {
         @Test
         public void shouldGetWithValidState() throws Exception {
-            when(bookingService.getBookingsByOwner(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
+            when(bookingService.getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
                     ArgumentMatchers.eq(PageRequest.of(from / size, size))))
                     .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
 
@@ -307,13 +307,13 @@ public class BookingControllerTest {
                     .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
 
             verify(bookingService, times(1))
-                    .getBookingsByOwner(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
+                    .getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
                             ArgumentMatchers.eq(PageRequest.of(from / size, size)));
         }
 
         @Test
         public void shouldGetWithDefaultState() throws Exception {
-            when(bookingService.getBookingsByOwner(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
+            when(bookingService.getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
                     ArgumentMatchers.eq(PageRequest.of(from / size, size))))
                     .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
 
@@ -323,7 +323,7 @@ public class BookingControllerTest {
                     .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
 
             verify(bookingService, times(1))
-                    .getBookingsByOwner(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
+                    .getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
                             ArgumentMatchers.eq(PageRequest.of(from / size, size)));
         }
 
@@ -334,7 +334,7 @@ public class BookingControllerTest {
                     .andExpect(status().isInternalServerError());
 
             verify(bookingService, never())
-                    .getBookingsByOwner(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
@@ -346,7 +346,7 @@ public class BookingControllerTest {
                     .andExpect(status().isInternalServerError());
 
             verify(bookingService, never())
-                    .getBookingsByOwner(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
@@ -358,7 +358,7 @@ public class BookingControllerTest {
                     .andExpect(status().isInternalServerError());
 
             verify(bookingService, never())
-                    .getBookingsByOwner(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
         }
     }
 }

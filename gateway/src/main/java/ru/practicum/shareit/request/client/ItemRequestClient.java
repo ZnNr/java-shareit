@@ -14,12 +14,12 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import java.util.Map;
 
 @Service
-public class RequestClient extends BaseClient {
+public class ItemRequestClient extends BaseClient {
 
     private static final String API_PREFIX = "/requests";
 
     @Autowired
-    public RequestClient(@Value(Constants.headerServerUrl) String serverUrl, RestTemplateBuilder builder) {
+    public ItemRequestClient(@Value(Constants.headerServerUrl) String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -28,25 +28,25 @@ public class RequestClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> addItemRequest(long requesterId, ItemRequestDto requestDto) {
-        return post("", requesterId, requestDto);
+    public ResponseEntity<Object> add(long userId, ItemRequestDto itemRequestDto) {
+        return post("", userId, itemRequestDto);
     }
 
-    public ResponseEntity<Object> getItemRequest(long requesterId, long requestId) {
-        return get("/" + requestId, requesterId);
+    public ResponseEntity<Object> getById(long userId, long id) {
+        return get("/" + id, userId);
     }
 
-    public ResponseEntity<Object> getOwnItemRequests(long requesterId) {
+    public ResponseEntity<Object> getByRequestorId(long userId) {
 
-        return get("", requesterId);
+        return get("", userId);
     }
 
-    public ResponseEntity<Object> getOtherUsersRequests(long requesterId, Integer from, Integer size) {
+    public ResponseEntity<Object> getAll(long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
         );
 
-        return get("/all?from={from}&size={size}", requesterId, parameters);
+        return get("/all?from={from}&size={size}", userId, parameters);
     }
 }

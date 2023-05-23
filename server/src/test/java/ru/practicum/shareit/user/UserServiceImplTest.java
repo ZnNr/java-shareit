@@ -68,7 +68,7 @@ class UserServiceImplTest {
             when(userRepository.findAll()).thenReturn(List.of(user1, user2));
             when(userMapper.toUserDto(any())).thenCallRealMethod();
 
-            List<UserDto> usersFromService = userService.getAllUsers();
+            List<UserDto> usersFromService = userService.getAll();
 
             assertEquals(2, usersFromService.size());
 
@@ -85,7 +85,7 @@ class UserServiceImplTest {
         public void shouldGetIfEmpty() {
             when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
-            List<UserDto> usersFromService = userService.getAllUsers();
+            List<UserDto> usersFromService = userService.getAll();
 
             assertTrue(usersFromService.isEmpty());
             verify(userRepository, times(1)).findAll();
@@ -123,7 +123,7 @@ class UserServiceImplTest {
             when(userMapper.toUserDto(any())).thenCallRealMethod();
             when(userMapper.toUser(any())).thenCallRealMethod();
 
-            userService.createUser(userMapper.toUserDto(user1));
+            userService.add(userMapper.toUserDto(user1));
 
             verify(userRepository, times(1)).save(user1);
         }
@@ -135,7 +135,7 @@ class UserServiceImplTest {
         public void shouldUpdate() {
             when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
 
-            userService.updateUser(user1.getId(), updateUserDto);
+            userService.update(user1.getId(), updateUserDto);
 
             verify(userRepository, times(1)).save(userArgumentCaptor.capture());
 
@@ -151,7 +151,7 @@ class UserServiceImplTest {
             when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
             NotFoundException exception = assertThrows(NotFoundException.class,
-                    () -> userService.updateUser(99L, updateUserDto));
+                    () -> userService.update(99L, updateUserDto));
             assertEquals("Пользователя с таким id не существует.", exception.getMessage());
             verify(userRepository, times(1)).findById(any());
             verify(userRepository, never()).save(any());
@@ -164,7 +164,7 @@ class UserServiceImplTest {
         public void shouldDelete() {
             when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-            userService.deleteUser(user1.getId());
+            userService.delete(user1.getId());
 
             NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getById(1L));
             assertEquals("Пользователя с таким id не существует.", exception.getMessage());
@@ -176,7 +176,7 @@ class UserServiceImplTest {
         public void shouldDeleteIfUserIdNotFound() {
             when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-            userService.deleteUser(99L);
+            userService.delete(99L);
 
             NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getById(99L));
             assertEquals("Пользователя с таким id не существует.", exception.getMessage());

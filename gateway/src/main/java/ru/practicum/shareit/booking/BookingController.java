@@ -1,75 +1,71 @@
 package ru.practicum.shareit.booking;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
-import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.markers.Constants;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-@Controller
+@RestController
 @RequestMapping(path = "/bookings")
-@RequiredArgsConstructor
 @Slf4j
 @Validated
 public class BookingController {
     private final BookingClient bookingClient;
 
-    @PostMapping
-    public ResponseEntity<Object> addBooking(@RequestHeader(Constants.headerUserId) Long userId,
-                                             @RequestBody @Valid BookItemRequestDto requestDto) {
-
-        log.info("Creating booking {}, userId={}", requestDto, userId);
-        return bookingClient.addBooking(userId, requestDto);
+    public BookingController(BookingClient bookingClient) {
+        this.bookingClient = bookingClient;
     }
 
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getBooking(@RequestHeader(Constants.headerUserId) Long userId,
-                                             @PathVariable Long bookingId) {
-
-        log.info("Get booking {}, userId={}", bookingId, userId);
-        return bookingClient.getBooking(userId, bookingId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@RequestHeader(Constants.headerUserId) Long userId,
+                                          @PathVariable Long id) {
+        log.info("Получен запрос GET /bookings/id  запрос на вещь с id" + id);
+        return bookingClient.getById(userId, id);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getBookingsByBookerAndStatus(
+    public ResponseEntity<Object> getAllByBookerId(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(name = "state", defaultValue = "all") String stateParam,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Get booking by booker with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-        return bookingClient.getBookingsByBookerAndStatus(userId, state, from, size);
+            @RequestParam(defaultValue = "ALL") String state,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+        BookingState stateEnum = BookingState.stringToState(state).orElseThrow(
+                () -> new IllegalArgumentException("Unknown state: " + state));
+        log.info("Получен запрос всех вещей бронирующего GET /bookings " + userId);
+        return bookingClient.getAllByBookerId(userId, stateEnum, from, size);
     }
 
-    @GetMapping(path = "/owner")
-    public ResponseEntity<Object> getBookingsByOwnerAndStatus(
+    @GetMapping("/owner")
+    public ResponseEntity<Object> getAllByOwnerId(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(name = "state", defaultValue = "all") String stateParam,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Get booking by owner with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-        return bookingClient.getBookingsByOwnerAndStatus(userId, state, from, size);
+            @RequestParam(defaultValue = "ALL") String state,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM, required = false) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE, required = false) @Positive Integer size) {
+        BookingState stateEnum = BookingState.stringToState(state).orElseThrow(
+                () -> new IllegalArgumentException("Unknown state: " + state));
+        log.info("Получен запрос всех вещей владельца GET /bookings/owner " + userId);
+        return bookingClient.getAllByOwnerId(userId, stateEnum, from, size);
     }
 
-    @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> setBookingApproval(@RequestHeader(name = Constants.headerUserId) Long requesterId,
-                                                     @PathVariable Long bookingId,
-                                                     @RequestParam Boolean approved) {
+    @PostMapping
+    public ResponseEntity<Object> add(@RequestHeader(Constants.headerUserId) Long userId,
+                                  @Valid @RequestBody BookingRequestDto bookingRequestDto) {
+        log.info("Получен запрос POST /bookings " + userId);
+        return bookingClient.add(userId, bookingRequestDto);
+    }
 
-        log.info("Set booking approval with ownerId={}, bookingId={}, approved={}", requesterId, bookingId, approved);
-        return bookingClient.setApproval(requesterId, bookingId, approved);
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> update(@RequestHeader(Constants.headerUserId) Long userId,
+                                     @PathVariable Long id,
+                                     @RequestParam() Boolean approved) {
+        log.info("Получен запрос PATCH /bookings/id " + " ! статус брони вещи с id" + id + ": забронировано=" + approved + " юзер с id" + userId);
+        return bookingClient.update(userId, id, approved);
     }
 }

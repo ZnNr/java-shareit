@@ -61,7 +61,7 @@ public class UserControllerTest {
     class Create {
         @Test
         public void shouldCreate() throws Exception {
-            when(userService.createUser(ArgumentMatchers.any(UserDto.class))).thenReturn(userDto1);
+            when(userService.add(ArgumentMatchers.any(UserDto.class))).thenReturn(userDto1);
 
             mvc.perform(post("/users")
                             .content(mapper.writeValueAsString(userDto1))
@@ -71,7 +71,7 @@ public class UserControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(userDto1)));
 
-            verify(userService, times(1)).createUser(ArgumentMatchers.any(UserDto.class));
+            verify(userService, times(1)).add(ArgumentMatchers.any(UserDto.class));
         }
 
         @Test
@@ -85,7 +85,7 @@ public class UserControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(userService, never()).createUser(ArgumentMatchers.any());
+            verify(userService, never()).add(ArgumentMatchers.any());
         }
 
         @Test
@@ -99,7 +99,7 @@ public class UserControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(userService, never()).createUser(ArgumentMatchers.any());
+            verify(userService, never()).add(ArgumentMatchers.any());
         }
 
         @Test
@@ -113,7 +113,7 @@ public class UserControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(userService, never()).createUser(ArgumentMatchers.any());
+            verify(userService, never()).add(ArgumentMatchers.any());
         }
 
         @Test
@@ -127,7 +127,7 @@ public class UserControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(userService, never()).createUser(ArgumentMatchers.any());
+            verify(userService, never()).add(ArgumentMatchers.any());
         }
     }
 
@@ -135,24 +135,24 @@ public class UserControllerTest {
     class GetAll {
         @Test
         public void shouldGet() throws Exception {
-            when(userService.getAllUsers()).thenReturn(List.of(userDto1, userDto2));
+            when(userService.getAll()).thenReturn(List.of(userDto1, userDto2));
 
             mvc.perform(get("/users"))
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(List.of(userDto1, userDto2))));
 
-            verify(userService, times(1)).getAllUsers();
+            verify(userService, times(1)).getAll();
         }
 
         @Test
         public void shouldGetIfEmpty() throws Exception {
-            when(userService.getAllUsers()).thenReturn(List.of());
+            when(userService.getAll()).thenReturn(List.of());
 
             mvc.perform(get("/users"))
                     .andExpect(status().isOk())
                     .andExpect(content().json(mapper.writeValueAsString(List.of())));
 
-            verify(userService, times(1)).getAllUsers();
+            verify(userService, times(1)).getAll();
         }
     }
 
@@ -174,7 +174,7 @@ public class UserControllerTest {
     class Patch {
         @Test
         public void shouldPatch() throws Exception {
-            when(userService.updateUser(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class)))
+            when(userService.update(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class)))
                     .thenReturn(userDtoPatched);
 
             mvc.perform(patch("/users/{id}", userDtoPatched.getId())
@@ -186,7 +186,7 @@ public class UserControllerTest {
                     .andExpect(content().json(mapper.writeValueAsString(userDtoPatched)));
 
             verify(userService, times(1))
-                    .updateUser(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class));
+                    .update(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class));
         }
 
         @Test
@@ -200,7 +200,7 @@ public class UserControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
 
-            verify(userService, never()).updateUser(ArgumentMatchers.any(), ArgumentMatchers.any());
+            verify(userService, never()).update(ArgumentMatchers.any(), ArgumentMatchers.any());
         }
     }
 
@@ -211,7 +211,7 @@ public class UserControllerTest {
             mvc.perform(delete("/users/{id}", 99L))
                     .andExpect(status().isOk());
 
-            verify(userService, times(1)).deleteUser(99L);
+            verify(userService, times(1)).delete(99L);
         }
     }
 }

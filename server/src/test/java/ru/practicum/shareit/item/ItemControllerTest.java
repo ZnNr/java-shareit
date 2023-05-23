@@ -237,16 +237,16 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto1 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto1);
-            bookingController.approve(userDto1.getId(), bookingResponseDto1.getId(), true);
+            BookingResponseDto bookingResponseDto1 = bookingService.add(userDto2.getId(), bookingRequestDto1);
+            bookingController.update(userDto1.getId(), bookingResponseDto1.getId(), true);
 
             BookingRequestDto bookingRequestDto2 = BookingRequestDto.builder()
                     .start(LocalDateTime.of(2025, 3, 30, 10, 0, 0))
                     .end(LocalDateTime.of(2025, 4, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto2 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto2);
-            bookingController.approve(userDto1.getId(), bookingResponseDto2.getId(), true);
+            BookingResponseDto bookingResponseDto2 = bookingService.add(userDto2.getId(), bookingRequestDto2);
+            bookingController.update(userDto1.getId(), bookingResponseDto2.getId(), true);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
             itemController.addComment(userDto2.getId(), itemDto1.getId(), commentRequestDto);
@@ -374,16 +374,16 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto1 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto1);
-            bookingController.approve(userDto1.getId(), bookingResponseDto1.getId(), true);
+            BookingResponseDto bookingResponseDto1 = bookingService.add(userDto2.getId(), bookingRequestDto1);
+            bookingController.update(userDto1.getId(), bookingResponseDto1.getId(), true);
 
             BookingRequestDto bookingRequestDto2 = BookingRequestDto.builder()
                     .start(LocalDateTime.of(2025, 3, 30, 10, 0, 0))
                     .end(LocalDateTime.of(2025, 4, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto2 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto2);
-            bookingController.approve(userDto1.getId(), bookingResponseDto2.getId(), true);
+            BookingResponseDto bookingResponseDto2 = bookingService.add(userDto2.getId(), bookingRequestDto2);
+            bookingController.update(userDto1.getId(), bookingResponseDto2.getId(), true);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
             itemController.addComment(userDto2.getId(), itemDto1.getId(), commentRequestDto);
@@ -460,16 +460,16 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto1 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto1);
-            bookingController.approve(userDto1.getId(), bookingResponseDto1.getId(), true);
+            BookingResponseDto bookingResponseDto1 = bookingService.add(userDto2.getId(), bookingRequestDto1);
+            bookingController.update(userDto1.getId(), bookingResponseDto1.getId(), true);
 
             BookingRequestDto bookingRequestDto2 = BookingRequestDto.builder()
                     .start(LocalDateTime.of(2023, 3, 30, 10, 0, 0))
                     .end(LocalDateTime.of(2023, 4, 30, 11, 0, 0))
                     .itemId(itemDto1.getId())
                     .build();
-            BookingResponseDto bookingResponseDto2 = bookingService.saveBooking(userDto2.getId(), bookingRequestDto2);
-            bookingController.approve(userDto1.getId(), bookingResponseDto2.getId(), true);
+            BookingResponseDto bookingResponseDto2 = bookingService.add(userDto2.getId(), bookingRequestDto2);
+            bookingController.update(userDto1.getId(), bookingResponseDto2.getId(), true);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
             itemController.addComment(userDto2.getId(), itemDto1.getId(), commentRequestDto);
@@ -779,8 +779,8 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
                     .itemId(itemDto.getId())
                     .build();
-            BookingResponseDto bookingResponseDto = bookingService.saveBooking(userDto2.getId(), bookingRequestDto);
-            bookingController.approve(userDto1.getId(), bookingResponseDto.getId(), true);
+            BookingResponseDto bookingResponseDto = bookingService.add(userDto2.getId(), bookingRequestDto);
+            bookingController.update(userDto1.getId(), bookingResponseDto.getId(), true);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
             itemController.addComment(userDto2.getId(), itemDto.getId(), commentRequestDto);
@@ -860,8 +860,8 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2050, 3, 30, 11, 0, 0))
                     .itemId(itemDto.getId())
                     .build();
-            BookingResponseDto bookingResponseDto = bookingService.saveBooking(userDto2.getId(), bookingRequestDto);
-            bookingController.approve(userDto1.getId(), bookingResponseDto.getId(), true);
+            BookingResponseDto bookingResponseDto = bookingService.add(userDto2.getId(), bookingRequestDto);
+            bookingController.update(userDto1.getId(), bookingResponseDto.getId(), true);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
 
@@ -901,7 +901,7 @@ public class ItemControllerTest {
                     .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
                     .itemId(itemDto.getId())
                     .build();
-            bookingService.saveBooking(userDto2.getId(), bookingRequestDto);
+            bookingService.add(userDto2.getId(), bookingRequestDto);
 
             CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
 
