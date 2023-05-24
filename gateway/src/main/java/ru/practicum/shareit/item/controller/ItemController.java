@@ -29,8 +29,8 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<Object> getByOwnerId(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
         log.info("Получен запрос GET /items " + userId);
         return itemClient.getByOwnerId(userId, from, size);
     }
@@ -63,12 +63,11 @@ public class ItemController {
         return itemClient.deleteItem(id);
     }
 
-
     @GetMapping("/search")
     public ResponseEntity<Object> search(
             @RequestParam String text,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
         log.info("Получен запрос PATCH /items/search " + text);
         return itemClient.search(text, from, size);
     }

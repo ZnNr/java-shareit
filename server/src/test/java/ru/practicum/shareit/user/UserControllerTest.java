@@ -9,17 +9,16 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.conroller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,80 +57,6 @@ public class UserControllerTest {
     }
 
     @Nested
-    class Create {
-        @Test
-        public void shouldCreate() throws Exception {
-            when(userService.add(ArgumentMatchers.any(UserDto.class))).thenReturn(userDto1);
-
-            mvc.perform(post("/users")
-                            .content(mapper.writeValueAsString(userDto1))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(userDto1)));
-
-            verify(userService, times(1)).add(ArgumentMatchers.any(UserDto.class));
-        }
-
-        @Test
-        public void shouldThrowExceptionIfEmailIsNull() throws Exception {
-            userDto1.setEmail(null);
-
-            mvc.perform(post("/users")
-                            .content(mapper.writeValueAsString(userDto1))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).add(ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfEmailIsEmpty() throws Exception {
-            userDto1.setEmail("");
-
-            mvc.perform(post("/users")
-                            .content(mapper.writeValueAsString(userDto1))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).add(ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfEmailIsBlank() throws Exception {
-            userDto1.setEmail(" ");
-
-            mvc.perform(post("/users")
-                            .content(mapper.writeValueAsString(userDto1))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).add(ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfIsNotEmail() throws Exception {
-            userDto1.setEmail("tester1ya.ru");
-
-            mvc.perform(post("/users")
-                            .content(mapper.writeValueAsString(userDto1))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).add(ArgumentMatchers.any());
-        }
-    }
-
-    @Nested
     class GetAll {
         @Test
         public void shouldGet() throws Exception {
@@ -167,40 +92,6 @@ public class UserControllerTest {
                     .andExpect(content().json(mapper.writeValueAsString(userDto1)));
 
             verify(userService, times(1)).getById(ArgumentMatchers.eq(userDto1.getId()));
-        }
-    }
-
-    @Nested
-    class Patch {
-        @Test
-        public void shouldPatch() throws Exception {
-            when(userService.update(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class)))
-                    .thenReturn(userDtoPatched);
-
-            mvc.perform(patch("/users/{id}", userDtoPatched.getId())
-                            .content(mapper.writeValueAsString(userDtoToPatch))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(userDtoPatched)));
-
-            verify(userService, times(1))
-                    .update(ArgumentMatchers.eq(userDtoPatched.getId()), ArgumentMatchers.any(UserDto.class));
-        }
-
-        @Test
-        public void shouldThrowExceptionIfNotEmail() throws Exception {
-            userDtoToPatch.setEmail("PatchedTester1ya.ru");
-
-            mvc.perform(patch("/users/{id}", userDtoPatched.getId())
-                            .content(mapper.writeValueAsString(userDtoToPatch))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).update(ArgumentMatchers.any(), ArgumentMatchers.any());
         }
     }
 

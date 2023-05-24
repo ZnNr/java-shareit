@@ -14,8 +14,6 @@ import ru.practicum.shareit.markers.Create;
 import ru.practicum.shareit.markers.Update;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -32,8 +30,8 @@ public class ItemController {
     @GetMapping
     public List<ItemExtendedDto> getByOwnerId(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) Integer from,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) Integer size) {
         log.info("Получен запрос GET /items " + userId);
         return itemService.getByOwnerId(userId, PageRequest.of(from / size, size));
     }
@@ -70,8 +68,8 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> search(
             @RequestParam String text,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) Integer from,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) Integer size) {
         log.info("Получен запрос PATCH /items/search " + text);
         return itemService.search(text, PageRequest.of(from / size, size));
     }

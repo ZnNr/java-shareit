@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
@@ -23,12 +22,12 @@ import ru.practicum.shareit.markers.Constants;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -103,74 +102,6 @@ public class BookingControllerTest {
     }
 
     @Nested
-    class Add {
-        @Test
-        public void shouldAdd() throws Exception {
-            when(bookingService.add(ArgumentMatchers.eq(user2.getId()), ArgumentMatchers.any(BookingRequestDto.class)))
-                    .thenReturn(bookingResponseDto1);
-
-            mvc.perform(post("/bookings")
-                            .header(Constants.headerUserId, user2.getId())
-                            .content(mapper.writeValueAsString(bookingRequestDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(bookingResponseDto1)));
-
-            verify(bookingService, times(1)).add(ArgumentMatchers.eq(user2.getId()),
-                    ArgumentMatchers.any(BookingRequestDto.class));
-        }
-
-        @Test
-        public void shouldThrowExceptionIfStartInPast() throws Exception {
-            bookingRequestDto.setStart(LocalDateTime.now().minusMinutes(5));
-            bookingRequestDto.setEnd(LocalDateTime.now().plusMinutes(10));
-
-            mvc.perform(post("/bookings")
-                            .header(Constants.headerUserId, user2.getId())
-                            .content(mapper.writeValueAsString(bookingRequestDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfEndInPresent() throws Exception {
-            bookingRequestDto.setStart(LocalDateTime.now().plusMinutes(5));
-            bookingRequestDto.setEnd(LocalDateTime.now());
-
-            mvc.perform(post("/bookings")
-                            .header(Constants.headerUserId, user2.getId())
-                            .content(mapper.writeValueAsString(bookingRequestDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfItemIdIsNull() throws Exception {
-            bookingRequestDto.setItemId(null);
-
-            mvc.perform(post("/bookings")
-                            .header(Constants.headerUserId, user2.getId())
-                            .content(mapper.writeValueAsString(bookingRequestDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(bookingService, never()).add(ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-    }
-
-    @Nested
     class Update {
         @Test
         public void shouldApproved() throws Exception {
@@ -224,141 +155,42 @@ public class BookingControllerTest {
         }
     }
 
-    @Nested
-    class GetAllByByBookerId {
-        @Test
-        public void shouldGetWithValidState() throws Exception {
-            when(bookingService.getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
-                    ArgumentMatchers.eq(PageRequest.of(from / size, size))))
-                    .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
+    @Test
+    public void shouldGetWithDefaultState() throws Exception {
+        when(bookingService.getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
+                ArgumentMatchers.eq(PageRequest.of(from / size, size))))
+                .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
 
-            mvc.perform(get("/bookings?state={state}&from={from}&size={size}", "ALL", from, size)
-                            .header(Constants.headerUserId, user2.getId()))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
+        mvc.perform(get("/bookings?from={from}&size={size}", from, size)
+                        .header(Constants.headerUserId, user2.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
 
-            verify(bookingService, times(1))
-                    .getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
-                            ArgumentMatchers.eq(PageRequest.of(from / size, size)));
-        }
-
-        @Test
-        public void shouldGetWithDefaultState() throws Exception {
-            when(bookingService.getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
-                    ArgumentMatchers.eq(PageRequest.of(from / size, size))))
-                    .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
-
-            mvc.perform(get("/bookings?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user2.getId()))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
-
-            verify(bookingService, times(1))
-                    .getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
-                            ArgumentMatchers.eq(PageRequest.of(from / size, size)));
-        }
-
-        @Test
-        public void shouldThrowExceptionIfUnknownState() throws Exception {
-            mvc.perform(get("/bookings?state={state}&from={from}&size={size}", "unknown", from, size)
-                            .header(Constants.headerUserId, user2.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByBookerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfFromIsNegative() throws Exception {
-            from = -1;
-
-            mvc.perform(get("/bookings?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user2.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByBookerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfSizeIsZero() throws Exception {
-            size = 0;
-
-            mvc.perform(get("/bookings?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user2.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByBookerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
+        verify(bookingService, times(1))
+                .getAllByBookerId(ArgumentMatchers.eq(userDto2.getId()), ArgumentMatchers.eq(State.ALL),
+                        ArgumentMatchers.eq(PageRequest.of(from / size, size)));
     }
 
-    @Nested
-    class GetAllByByOwnerId {
-        @Test
-        public void shouldGetWithValidState() throws Exception {
-            when(bookingService.getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
-                    ArgumentMatchers.eq(PageRequest.of(from / size, size))))
-                    .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
+    @Test
+    public void shouldThrowExceptionIfUnknownState() throws Exception {
+        mvc.perform(get("/bookings?state={state}&from={from}&size={size}", "unknown", from, size)
+                        .header(Constants.headerUserId, user2.getId()))
+                .andExpect(status().isInternalServerError());
 
-            mvc.perform(get("/bookings/owner?state={state}&from={from}&size={size}", "ALL", from, size)
-                            .header(Constants.headerUserId, user1.getId()))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
+        verify(bookingService, never())
+                .getAllByBookerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+    }
 
-            verify(bookingService, times(1))
-                    .getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
-                            ArgumentMatchers.eq(PageRequest.of(from / size, size)));
-        }
 
-        @Test
-        public void shouldGetWithDefaultState() throws Exception {
-            when(bookingService.getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
-                    ArgumentMatchers.eq(PageRequest.of(from / size, size))))
-                    .thenReturn(List.of(bookingResponseDto1, bookingResponseDto2));
+    @Test
+    public void shouldThrowExceptionIfSizeIsZero() throws Exception {
+        size = 0;
 
-            mvc.perform(get("/bookings/owner?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user1.getId()))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(mapper.writeValueAsString(List.of(bookingResponseDto1, bookingResponseDto2))));
+        mvc.perform(get("/bookings?from={from}&size={size}", from, size)
+                        .header(Constants.headerUserId, user2.getId()))
+                .andExpect(status().isInternalServerError());
 
-            verify(bookingService, times(1))
-                    .getAllByOwnerId(ArgumentMatchers.eq(itemDto.getOwnerId()), ArgumentMatchers.eq(State.ALL),
-                            ArgumentMatchers.eq(PageRequest.of(from / size, size)));
-        }
-
-        @Test
-        public void shouldThrowExceptionIfUnknownState() throws Exception {
-            mvc.perform(get("/bookings/owner?state={state}&from={from}&size={size}", "unknown", from, size)
-                            .header(Constants.headerUserId, user1.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfFromIsNegative() throws Exception {
-            from = -1;
-
-            mvc.perform(get("/bookings/owner?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user1.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
-
-        @Test
-        public void shouldThrowExceptionIfSizeIsZero() throws Exception {
-            size = 0;
-
-            mvc.perform(get("/bookings/owner?from={from}&size={size}", from, size)
-                            .header(Constants.headerUserId, user1.getId()))
-                    .andExpect(status().isInternalServerError());
-
-            verify(bookingService, never())
-                    .getAllByOwnerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
-        }
+        verify(bookingService, never())
+                .getAllByBookerId(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
     }
 }

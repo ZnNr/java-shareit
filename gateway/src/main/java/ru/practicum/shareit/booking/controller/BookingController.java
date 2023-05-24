@@ -1,9 +1,10 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.markers.Constants;
@@ -34,8 +35,8 @@ public class BookingController {
     public ResponseEntity<Object> getAllByBookerId(
             @RequestHeader(Constants.headerUserId) Long userId,
             @RequestParam(defaultValue = "ALL") String state,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
         BookingState stateEnum = BookingState.stringToState(state).orElseThrow(
                 () -> new IllegalArgumentException("Unknown state: " + state));
         log.info("Получен запрос всех вещей бронирующего GET /bookings " + userId);
@@ -46,8 +47,8 @@ public class BookingController {
     public ResponseEntity<Object> getAllByOwnerId(
             @RequestHeader(Constants.headerUserId) Long userId,
             @RequestParam(defaultValue = "ALL") String state,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM, required = false) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE, required = false) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.pageFrom, required = false) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.pageSize, required = false) @Positive Integer size) {
         BookingState stateEnum = BookingState.stringToState(state).orElseThrow(
                 () -> new IllegalArgumentException("Unknown state: " + state));
         log.info("Получен запрос всех вещей владельца GET /bookings/owner " + userId);

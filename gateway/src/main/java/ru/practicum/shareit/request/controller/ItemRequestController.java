@@ -49,8 +49,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     public ResponseEntity<Object> getAll(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) @Positive Integer size) {
+            @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
         log.info("Получен запрос GET всех вещей пользователя с id: " + userId);
         return itemRequestClient.getAll(userId, from, size);
     }
