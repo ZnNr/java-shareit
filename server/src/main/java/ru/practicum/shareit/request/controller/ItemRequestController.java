@@ -11,6 +11,7 @@ import ru.practicum.shareit.request.dto.ItemRequestExtendedDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -50,7 +51,7 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestExtendedDto> getAll(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) Integer from,
+            @RequestParam(defaultValue = Constants.PAGE_DEFAULT_FROM) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.PAGE_DEFAULT_SIZE) Integer size) {
         log.info("Получен запрос GET всех вещей пользователя с id: " + userId);
         return itemRequestService.getAll(userId, PageRequest.of(from / size, size));
