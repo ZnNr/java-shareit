@@ -1,25 +1,21 @@
 package ru.practicum.shareit.user.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.markers.Create;
-import ru.practicum.shareit.markers.Update;
 import ru.practicum.shareit.user.client.UserClient;
 import ru.practicum.shareit.user.dto.UserDto;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserClient userClient;
-
-    public UserController(UserClient userClient) {
-        this.userClient = userClient;
-    }
-
 
     @GetMapping
     public ResponseEntity<Object> getAll() {
@@ -36,7 +32,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> add(
-            @Validated(Create.class)
+            @Valid
             @RequestBody UserDto userDto) {
         log.info("Получен запрос POST /users " + userDto);
         return userClient.add(userDto);
@@ -44,7 +40,6 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id,
-                                         @Validated(Update.class)
                                          @RequestBody UserDto userDto) {
         log.info("Получен запрос PATCH /users/id " + "!Обновление пользователя с id " + id + " на " + userDto);
         return userClient.update(userDto, id);

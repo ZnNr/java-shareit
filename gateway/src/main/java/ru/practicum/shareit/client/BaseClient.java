@@ -8,10 +8,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
-public class BaseClient {
+public abstract class BaseClient {
     protected final RestTemplate rest;
 
-    public BaseClient(RestTemplate rest) {
+    protected BaseClient(RestTemplate rest) {
         this.rest = rest;
     }
 
@@ -67,8 +67,8 @@ public class BaseClient {
         return makeAndSendRequest(HttpMethod.PATCH, path, userId, parameters, body);
     }
 
-    protected ResponseEntity<Object> delete(String path) {
-        return delete(path, null, null);
+    protected void delete(String path) {
+        delete(path, null, null);
     }
 
     protected ResponseEntity<Object> delete(String path, long userId) {

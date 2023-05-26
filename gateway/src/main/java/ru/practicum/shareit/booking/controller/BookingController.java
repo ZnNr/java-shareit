@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.enums.BookingState;
-import ru.practicum.shareit.markers.Constants;
+import ru.practicum.shareit.constants.Constants;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -17,14 +18,11 @@ import javax.validation.constraints.PositiveOrZero;
 @RequestMapping(path = "/bookings")
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class BookingController {
     private final BookingClient bookingClient;
 
-    public BookingController(BookingClient bookingClient) {
-        this.bookingClient = bookingClient;
-    }
-
-    @GetMapping("/{id}")
+       @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@RequestHeader(Constants.headerUserId) Long userId,
                                           @PathVariable Long id) {
         log.info("Получен запрос GET /bookings/id  запрос на вещь с id" + id);
@@ -34,13 +32,13 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<Object> getAllByBookerId(
             @RequestHeader(Constants.headerUserId) Long userId,
-            @RequestParam(defaultValue = "ALL") String state,
+            @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
             @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
-        BookingState stateEnum = BookingState.stringToState(state).orElseThrow(
-                () -> new IllegalArgumentException("Unknown state: " + state));
+        BookingState state = BookingState.stringToState(stateParam).orElseThrow(
+                () -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info("Получен запрос всех вещей бронирующего GET /bookings " + userId);
-        return bookingClient.getAllByBookerId(userId, stateEnum, from, size);
+        return bookingClient.getAllByBookerId(userId, state, from, size);
     }
 
     @GetMapping("/owner")

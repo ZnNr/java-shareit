@@ -1,29 +1,28 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
+
 @Getter
-@Setter
-@Builder
-@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookingRequestDto {
 
     @NotNull
+    private Long itemId;
+
+    @NotNull
     @FutureOrPresent
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @NotNull
     @Future
-    LocalDateTime end;
-
-    @NotNull
-    Long itemId;
-
+    private LocalDateTime end;
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.client;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,7 +11,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.markers.Constants;
+import ru.practicum.shareit.constants.Constants;
 
 import java.util.Map;
 
@@ -36,9 +37,9 @@ public class BookingClient extends BaseClient {
         return get("/" + id, userId);
     }
 
-    public ResponseEntity<Object> getAllByBookerId(long userId, BookingState stateEnum, Integer from, Integer size) {
+    public ResponseEntity<Object> getAllByBookerId(long userId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
-                "state", stateEnum.name(),
+                "state", state.name(),
                 "from", from,
                 "size", size
         );
@@ -59,6 +60,6 @@ public class BookingClient extends BaseClient {
                 "approved", approved
         );
 
-        return patch("/" + id + "?approved={approved}", userId, parameters, null);
+        return patch("/" + id + "?approved={approved}", userId, parameters);
     }
 }

@@ -11,10 +11,10 @@ public enum BookingState {
     WAITING,
     REJECTED;
 
-    public static Optional<BookingState> stringToState(String state) {
-        for (BookingState value : BookingState.values()) {
-            if (value.name().equals(state)) {
-                return Optional.of(value);
+    public static Optional<BookingState> stringToState(String stringState) {
+        for (BookingState state : BookingState.values()) {
+            if (state.name().equals(stringState)) {
+                return Optional.of(state);
             }
         }
         return Optional.empty();

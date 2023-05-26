@@ -9,6 +9,7 @@ services:
       - "5005:5005"  # Debugging port
     depends_on:
       - server
+
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005

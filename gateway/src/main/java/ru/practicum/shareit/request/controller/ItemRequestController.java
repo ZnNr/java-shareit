@@ -1,10 +1,11 @@
 package ru.practicum.shareit.request.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.markers.Constants;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.request.client.ItemRequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
@@ -16,12 +17,9 @@ import javax.validation.constraints.PositiveOrZero;
 @RequestMapping(path = "/requests")
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
-
-    public ItemRequestController(ItemRequestClient itemRequestClient) {
-        this.itemRequestClient = itemRequestClient;
-    }
 
     @PostMapping
     public ResponseEntity<Object> add(
