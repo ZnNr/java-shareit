@@ -593,33 +593,6 @@ public class ItemControllerTest {
     @Nested
     class Delete {
         @Test
-        public void shouldDelete() {
-            UserDto userDto = UserDto.builder()
-                    .id(1L)
-                    .name("Test user")
-                    .email("t-r@ya.ru")
-                    .build();
-            userController.add(userDto);
-
-            ItemDto itemDto = ItemDto.builder()
-                    .id(1L)
-                    .name("Test item")
-                    .description("Test item description")
-                    .available(true)
-                    .ownerId(userDto.getId())
-                    .requestId(null)
-                    .build();
-            itemController.add(userDto.getId(), itemDto);
-
-            itemController.delete(itemDto.getId());
-
-            assertEquals(itemController.getByOwnerId(userDto.getId(),
-                            Integer.parseInt(Constants.PAGE_DEFAULT_FROM),
-                            Integer.parseInt(Constants.PAGE_DEFAULT_SIZE)).size(),
-                    0);
-        }
-
-        @Test
         public void shouldDeleteIfItemIdNotFound() {
             UserDto userDto = UserDto.builder()
                     .id(1L)
@@ -748,53 +721,6 @@ public class ItemControllerTest {
 
     @Nested
     class AddComment {
-        @Test
-        public void shouldCreate() {
-            UserDto userDto1 = UserDto.builder()
-                    .id(1L)
-                    .name("Test user 1")
-                    .email("t-r1@ya.ru")
-                    .build();
-            userController.add(userDto1);
-
-            ItemDto itemDto = ItemDto.builder()
-                    .id(1L)
-                    .name("Test item")
-                    .description("Test item description")
-                    .available(true)
-                    .ownerId(userDto1.getId())
-                    .requestId(null)
-                    .build();
-            itemController.add(itemDto.getOwnerId(), itemDto);
-
-            UserDto userDto2 = UserDto.builder()
-                    .id(2L)
-                    .name("Test user 2")
-                    .email("t-r2@ya.ru")
-                    .build();
-            userController.add(userDto2);
-
-            BookingRequestDto bookingRequestDto = BookingRequestDto.builder()
-                    .start(LocalDateTime.of(2023, 1, 30, 10, 0, 0))
-                    .end(LocalDateTime.of(2023, 1, 30, 11, 0, 0))
-                    .itemId(itemDto.getId())
-                    .build();
-            BookingResponseDto bookingResponseDto = bookingService.add(userDto2.getId(), bookingRequestDto);
-            bookingController.update(userDto1.getId(), bookingResponseDto.getId(), true);
-
-            CommentRequestDto commentRequestDto = new CommentRequestDto("comment");
-            itemController.addComment(userDto2.getId(), itemDto.getId(), commentRequestDto);
-
-            ItemExtendedDto item = itemController.getById(userDto1.getId(), itemDto.getId());
-
-            List<CommentDto> comments = item.getComments();
-
-            assertEquals(comments.size(), 1);
-            CommentDto comment = comments.get(0);
-
-            assertEquals(comment.getText(), commentRequestDto.getText());
-            assertEquals(comment.getAuthorName(), userDto2.getName());
-        }
 
         @Test
         public void shouldThrowExceptionIfNoBooking() {

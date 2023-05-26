@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "request", schema = "public")
+@Table(name = "requests", schema = "public")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter

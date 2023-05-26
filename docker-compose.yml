@@ -6,13 +6,12 @@ services:
     container_name: gateway_app
     ports:
       - "8080:8080"
-      - "5005:5005"  # Debugging port
+
     depends_on:
       - server
 
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 
   server:
     build: server
@@ -20,13 +19,13 @@ services:
     container_name: server_app
     ports:
       - "9090:9090"
-      - "5006:5005"  # Debugging port
+
     depends_on:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-
+      - POSTGRES_USER=shareit
+      - POSTGRES_PASSWORD=shareit
   db:
     image: postgres:15.3-alpine
     container_name: postgres_db
