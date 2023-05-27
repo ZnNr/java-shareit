@@ -6,10 +6,8 @@ services:
     container_name: gateway_app
     ports:
       - "8080:8080"
-
     depends_on:
       - server
-
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
 
@@ -19,19 +17,21 @@ services:
     container_name: server_app
     ports:
       - "9090:9090"
-
     depends_on:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - POSTGRES_USER=shareit
-      - POSTGRES_PASSWORD=shareit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
   db:
     image: postgres:15.3-alpine
-    container_name: postgres_db
+    container_name: shareit-db
     ports:
       - "6541:5432"
+    volumes:
+      - /var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=shareit
-      - POSTGRES_USER=shareit
-      - POSTGRES_PASSWORD=shareit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
