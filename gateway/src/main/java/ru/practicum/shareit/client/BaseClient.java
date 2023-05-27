@@ -20,8 +20,6 @@ public abstract class BaseClient {
         return get(path, null, null);
     }
 
-
-
     protected ResponseEntity<Object> get(String path, long userId) {
         return get(path, userId, null);
     }
@@ -49,6 +47,7 @@ public abstract class BaseClient {
     protected <T> ResponseEntity<Object> put(String path, long userId, @Nullable Map<String, Object> parameters, T body) {
         return makeAndSendRequest(HttpMethod.PUT, path, userId, parameters, body);
     }
+
     protected <T> ResponseEntity<Object> patch(String path, T body) {
         return patch(path, null, null, body);
     }
@@ -102,7 +101,7 @@ public abstract class BaseClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         if (userId != null) {
-            headers.set("X-Sharer-User-Id", String.valueOf(userId));
+            headers.set(Constants.headerUserId, String.valueOf(userId));
         }
         return headers;
     }

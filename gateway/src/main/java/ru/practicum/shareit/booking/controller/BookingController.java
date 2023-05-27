@@ -62,8 +62,8 @@ public class BookingController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@RequestHeader(Constants.headerUserId) Long userId,
-                                     @PathVariable Long id,
-                                     @RequestParam() Boolean approved) {
+                                         @PathVariable Long id,
+                                         @RequestParam() Boolean approved) {
         log.info("Получен запрос PATCH /bookings/id " + " ! статус брони вещи с id" + id + ": забронировано=" + approved + " юзер с id" + userId);
         return bookingClient.update(userId, id, approved);
     }

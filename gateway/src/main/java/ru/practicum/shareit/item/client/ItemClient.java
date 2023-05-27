@@ -9,9 +9,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.constants.Constants;
 
 import java.util.List;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class ItemClient extends BaseClient {
         return get("?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> search(String text,  Long userId, int from, int size) {
+    public ResponseEntity<Object> search(String text, Long userId, int from, int size) {
         if (text.isBlank()) {
             return ResponseEntity.status(HttpStatus.OK).body(List.of());
         }
