@@ -63,11 +63,12 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(
+            @RequestHeader(Constants.headerUserId) Long userId,
             @RequestParam String text,
             @RequestParam(defaultValue = Constants.pageFrom) @PositiveOrZero Integer from,
             @RequestParam(defaultValue = Constants.pageSize) @Positive Integer size) {
         log.info("Получен запрос PATCH /items/search " + text);
-        return itemClient.search(text, from, size);
+        return itemClient.search(text, userId, from, size);
     }
 
     @PostMapping("{id}/comment")

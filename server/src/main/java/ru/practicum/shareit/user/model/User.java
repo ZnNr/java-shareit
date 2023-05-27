@@ -8,11 +8,9 @@ import javax.validation.constraints.Email;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

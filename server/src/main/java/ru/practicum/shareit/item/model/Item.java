@@ -10,11 +10,9 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "items", schema = "public")
+@Table(name = "items")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

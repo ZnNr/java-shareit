@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "requests", schema = "public")
+@Table(name = "requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

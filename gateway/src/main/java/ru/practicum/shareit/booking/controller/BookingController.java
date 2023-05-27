@@ -22,7 +22,7 @@ import javax.validation.constraints.PositiveOrZero;
 public class BookingController {
     private final BookingClient bookingClient;
 
-       @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@RequestHeader(Constants.headerUserId) Long userId,
                                           @PathVariable Long id) {
         log.info("Получен запрос GET /bookings/id  запрос на вещь с id" + id);
@@ -62,8 +62,8 @@ public class BookingController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@RequestHeader(Constants.headerUserId) Long userId,
-                                         @PathVariable Long id,
-                                         @RequestParam() Boolean approved) {
+                                     @PathVariable Long id,
+                                     @RequestParam() Boolean approved) {
         log.info("Получен запрос PATCH /bookings/id " + " ! статус брони вещи с id" + id + ": забронировано=" + approved + " юзер с id" + userId);
         return bookingClient.update(userId, id, approved);
     }
