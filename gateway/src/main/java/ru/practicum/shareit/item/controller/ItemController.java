@@ -9,6 +9,7 @@ import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.client.ItemClient;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemExtendedDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -41,9 +42,9 @@ public class ItemController {
     @Validated
     @PostMapping
     public ResponseEntity<Object> add(@RequestHeader(Constants.headerUserId) Long userId,
-                                      @Valid @RequestBody ItemDto itemDto) {
-        log.info("Получен запрос POST /items " + itemDto);
-        return itemClient.add(userId, itemDto);
+                                      @Valid @RequestBody ItemExtendedDto itemExtendedDto) {
+        log.info("Получен запрос POST /items " + itemExtendedDto);
+        return itemClient.add(userId, itemExtendedDto);
     }
 
     @PatchMapping("/{id}")
